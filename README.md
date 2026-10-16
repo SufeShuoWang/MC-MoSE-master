@@ -20,6 +20,9 @@ The script runs ten independent random seeds. To run a subset:
 python train.py --seeds 1
 python train.py --seeds 1 12 123
 ```
+## Data
+
+Due to data restrictions, we provide only demonstration datasets in MC-MoSE-master/data/, comprising fund data for 2023–2024 and data required for backtesting for 2021–2024. The full training dataset is not included.
 
 ## Backtesting
 
