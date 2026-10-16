@@ -1,4 +1,4 @@
-# Usage
+# MC-MoSE
 
 ## Installation
 
