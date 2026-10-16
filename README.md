@@ -33,10 +33,8 @@ To evaluate a prediction file or another prediction directory:
 python backtest.py --predictions outputs/test_predictions/mc_mose_seed1_test_predictions.csv
 ```
 
-Backtesting stops when a month has fewer than 60 eligible funds. Sortino is
-left blank when all monthly long-short returns in the evaluated period are
-nonnegative. SR is left blank when their standard deviation is zero. Other
-metrics and cumulative returns are still reported.
+Sortino is left blank when all monthly long-short returns in the evaluated period are
+nonnegative. SR is left blank when their standard deviation is zero.
 
 Summary statistics use the valid seeds for each metric; `n_seeds` reports
 that count. The mean is blank when no seeds are valid, and the sample standard
@@ -49,5 +47,4 @@ Training results are saved under `outputs/checkpoints/`, `outputs/logs/`,
 
 Backtesting writes only `outputs/backtest.xlsx`, containing four worksheets:
 `Summary`, `PerSeedMetrics`, `CumulativeReturn`, and `CumulativeAbnormalReturn`.
-The evaluated months follow the prediction files. The default training split
-produces test predictions for October through December 2024.
+The evaluated months follow the prediction files.
