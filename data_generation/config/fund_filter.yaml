@@ -1,0 +1,148 @@
+version: 1
+
+status_values:
+  pass: pass
+  unknown: unknown
+  explicit_fail: explicit_fail
+
+status_priority:
+  - explicit_fail
+  - pass
+  - unknown
+
+style:
+  field: crsp_obj_cd
+  pass_prefixes:
+    - ED
+  fail_prefixes:
+    - EDS
+  non_ed_is_explicit_fail: true
+  missing_status: unknown
+
+index_fund:
+  field: index_fund_flag
+  explicit_fail_values:
+    - B
+    - D
+    - E
+  missing_is_explicit_fail: false
+  missing_forces_unknown: false
+
+etf_etn:
+  field: et_flag
+  explicit_fail_values:
+    - F
+    - N
+  missing_is_explicit_fail: false
+  missing_forces_unknown: false
+
+fund_name:
+  field: fund_name
+  case_sensitive: false
+  normalization:
+    lowercase: true
+    strip: true
+    collapse_whitespace: true
+    replace_punctuation_with_space: true
+
+  explicit_fail_patterns:
+    index_or_passive:
+      - '\bindex\b'
+      - '\bindexed\b'
+      - '\bindexing\b'
+      - '\bpassive\b'
+      - '\bs&p\b'
+      - '\bstandard\s+(and|&)\s+poor'
+      - '\brussell\b'
+      - '\bnasdaq\b'
+      - '\bdow(\s+jones)?\b'
+      - '\bwilshire\b'
+
+    international:
+      - '\binternational\b'
+      - '\bglobal\b'
+      - '\bforeign\b'
+      - '\bworld\b'
+      - '\bworldwide\b'
+      - '\boverseas\b'
+      - '\bemerging\s+markets?\b'
+
+    sector_or_industry:
+      - '\bsector\b'
+      - '\bindustry\b'
+      - '\bindustries\b'
+      - '\btechnology\b'
+      - '\bhealth\s*care\b'
+      - '\bbiotech(nology)?\b'
+      - '\benergy\b'
+      - '\bfinancial\s+services?\b'
+      - '\butilities\b'
+      - '\breal\s+estate\b'
+      - '\btelecommunications?\b'
+      - '\bnatural\s+resources?\b'
+      - '\bprecious\s+metals?\b'
+      - '\bgold\b'
+
+    bond_or_fixed_income:
+      - '\bbond\b'
+      - '\bfixed\s+income\b'
+      - '\bmunicipal\b'
+      - '\btax[\s-]*(free|exempt)\b'
+      - '\btreasury\b'
+      - '\bgovernment\s+securities\b'
+      - '\bcorporate\s+debt\b'
+
+    balanced_or_allocation:
+      - '\bbalanced\b'
+      - '\basset\s+allocation\b'
+      - '\ballocation\s+fund\b'
+      - '\btarget[\s-]*date\b'
+      - '\blife[\s-]*cycle\b'
+      - '\blifecycle\b'
+
+    money_market:
+      - '\bmoney\s+market\b'
+      - '\bcash\s+reserve\b'
+      - '\bcash\s+management\b'
+
+    etf_or_etn_name:
+      - '\betf\b'
+      - '\betn\b'
+      - '\bexchange[\s-]*traded\b'
+      - '\bishares?\b'
+      - '\bspdr\b'
+      - '\bstreettracks?\b'
+      - '\bholdrs\b'
+
+classification:
+  explicit_fail_if_any:
+    - style_non_ed
+    - style_eds
+    - excluded_index_flag
+    - excluded_et_flag
+    - excluded_name_pattern
+  pass_if_all:
+    - style_starts_with_ed
+    - style_not_starts_with_eds
+    - no_explicit_fail_evidence
+  unknown_if_all:
+    - no_explicit_fail_evidence
+    - style_not_sufficient_for_pass
+
+wficn_month:
+  eligibility_rule: at_least_one_pass
+  aggregation_statuses:
+    - pass
+    - unknown
+  excluded_from_aggregation:
+    - explicit_fail
+  style_source_statuses:
+    - pass
+  all_unknown_action: exclude
+  unknown_plus_fail_without_pass_action: exclude
+  all_fail_action: exclude
+
+audit:
+  save_reason_columns: true
+  save_matched_name_patterns: true
+  save_status_counts_by_wficn_month: true

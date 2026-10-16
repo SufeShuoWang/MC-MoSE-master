@@ -1,0 +1,35 @@
+project_root: .
+raw_csv_root: Data_processing/manual_processing
+fund_ret: Data_processing/manual_processing/monthly_returns.csv
+fund_tna: Data_processing/manual_processing/monthly_tna.csv
+fund_fees: Data_processing/manual_processing/fund_fees.csv
+fund_hdr: Data_processing/manual_processing/fund_hdr.csv
+fund_hdr_hist: Data_processing/manual_processing/fund_hdr_hist.csv
+fund_style: Data_processing/manual_processing/fund_style.csv
+mflink_crsp: Data_processing/manual_processing/crsp_fundno_wficn.csv
+mflink_s12: Data_processing/manual_processing/fundno_wficn.csv
+s12_type1: Data_processing/manual_processing/s12type1.csv
+s12_type3: Data_processing/manual_processing/s12type3.csv
+crsp_monthly: Data_processing/manual_processing/monthly_stock_file.csv
+mth_adjust_factor: Data_processing/manual_processing/mthadjustfactors.csv
+crsp_daily: Data_processing/manual_processing/daily_stock_file.csv
+compustat: Data_processing/manual_processing/compfunda.csv
+ccm: Data_processing/manual_processing/ccm_linktable.csv
+ff_monthly: Data_processing/manual_processing/F-F_Research_Data_Factors.csv
+mom_monthly: Data_processing/manual_processing/F-F_Momentum_Factor.csv
+ff_daily: Data_processing/manual_processing/F-F_Research_Data_Factors_daily.csv
+distribution: Data_processing/manual_processing/distribution_Information.csv
+sentiment:
+  path: Data_processing/manual_processing/SENTIMENT.xlsx
+  sheet_name: DATA
+cfnai:
+  path: Data_processing/manual_processing/CFNAI.csv
+data_interim: data/interim
+data_processed: data/processed
+data_audit: data/audit
+outputs_panels: outputs/panels
+outputs_npz: outputs/npz
+outputs_reports: outputs/reports
+logs: logs
+docs: docs
+full_run_tmp: data/interim/_full_run_tmp

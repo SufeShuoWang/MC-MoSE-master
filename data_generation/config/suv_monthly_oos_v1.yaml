@@ -1,0 +1,48 @@
+method: monthly_oos_suv_v1
+deprecated: false
+implementation_family: Garfinkel-style out-of-sample abnormal volume
+exact_cpz_replication: false
+
+alignment:
+  evaluation_month: "m=t-1"
+  estimation_information_cutoff: "strictly before the first day of m"
+
+inputs:
+  return_column: dlyret
+  volume_column: dlyvol
+  invalid_numeric_sentinel: -99.99
+
+estimation_window: 60
+window_semantics: last_valid_stock_observations
+min_estimation_obs: 40
+min_evaluation_obs: 10
+gap_trading_days: 0
+include_intercept: true
+sigma_degrees_of_freedom: "n_est-3"
+sigma_floor: 1.0e-12
+
+return_transform:
+  r_plus: "max(ret, 0)"
+  r_minus: "max(-ret, 0)"
+
+monthly_aggregation: mean
+numeric_dtype: float64
+stable_sort_keys:
+  - permno
+  - date
+
+missing_reasons:
+  - insufficient_estimation_obs
+  - insufficient_evaluation_obs
+  - rank_deficient
+  - zero_sigma
+  - missing_daily_input
+
+legacy_method:
+  name: legacy_same_sample_zero
+  deprecated: true
+  formal_production_method: false
+  permitted_uses:
+    - v3.1_historical_explanation
+    - comparison_test
+    - demonstrate_intercept_residual_mean_zero

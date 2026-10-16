@@ -1,0 +1,210 @@
+version: 3
+note: required_columns are raw on-disk names; rename_columns define code names
+schema_version: "3.0.0"
+data_release_version: "3.2.0"
+implementation_version: deterministic_numeric_v1_suv_oos_v1
+release_name: kaniel_alpha_59core_2macro_v3.2_suv_fixed_cf_unresolved
+
+processed_outputs:
+  fund_alpha_momentum:
+    path: data/processed/fund/fund_alpha_momentum_raw.parquet
+    primary_key: [wficn, month]
+    required_columns: [wficn, month, excess_return, alpha, carhart_n_obs, beta_mktrf, beta_smb, beta_hml, beta_mom, F_ST_Rev, F_r2_1, F_r12_2]
+    label_column: alpha
+    legacy_label_column: rret
+    legacy_path: data/processed/fund/fund_rret_momentum_raw.parquet
+  raw_same_month_panel:
+    path: outputs/panels/raw_same_month_panel.parquet
+    primary_key: [wficn, month]
+    label_column: alpha
+    forbidden_columns: [rret, official_rret_raw]
+  model_ready_panel:
+    path: outputs/panels/model_ready_panel.parquet
+    primary_key: [wficn, target_month]
+    label_column: alpha
+    forbidden_columns: [rret, official_rret_raw]
+  formal_npz:
+    path: outputs/npz/kaniel_1980_2024_model_ready.npz
+    keys: [X, X_macro, y, dates, feature_months, wficn, feature_names, macro_feature_names]
+    label_key: y
+    label_name: alpha
+    core_feature_count: 59
+    macro_feature_count: 2
+    numeric_implementation: deterministic_numeric_v1_suv_oos_v1
+  stock_46_ranked_imputed:
+    path: data/processed/stock/stock_46_ranked_imputed.parquet
+    primary_key: [permno, month]
+    feature_count: 46
+    pca_solver: deterministic_direct_tsvd
+    pca_relative_singular_value_threshold: 0.05
+    observed_value_policy: preserve_exactly
+    missing_mask_policy: preserve_exactly
+  official_abnormal_return:
+    path: Data_processing/official_kaniel_v2/Data/abnormal_return.csv
+    raw_return_field: rret
+    model_label_field: alpha
+    code_aliases:
+      rret: official_rret_raw
+      alpha: official_alpha
+
+monthly_returns:
+  path_key: fund_ret
+  required_columns: [crsp_fundno, caldt, mret]
+  rename_columns: {}
+  date_columns: [caldt]
+  primary_key: [crsp_fundno, caldt]
+
+monthly_tna:
+  path_key: fund_tna
+  required_columns: [crsp_fundno, caldt, mtna]
+  rename_columns: {}
+  date_columns: [caldt]
+  primary_key: [crsp_fundno, caldt]
+
+fund_fees:
+  path_key: fund_fees
+  required_columns: [crsp_fundno, begdt, enddt, exp_ratio, turn_ratio]
+  rename_columns: {}
+  date_columns: [begdt, enddt]
+  primary_key: [crsp_fundno, begdt, enddt]
+
+fund_hdr:
+  path_key: fund_hdr
+  required_columns: [crsp_fundno, first_offer_dt]
+  rename_columns: {}
+  date_columns: [first_offer_dt]
+  primary_key: [crsp_fundno]
+
+fund_hdr_hist:
+  path_key: fund_hdr_hist
+  required_columns: [crsp_fundno, chgdt, chgenddt, fund_name, index_fund_flag, et_flag, mgmt_name, mgmt_cd, first_offer_dt]
+  rename_columns: {}
+  date_columns: [chgdt, chgenddt, first_offer_dt]
+  primary_key: [crsp_fundno, chgdt, chgenddt]
+
+fund_style:
+  path_key: fund_style
+  required_columns: [crsp_fundno, begdt, enddt, crsp_obj_cd]
+  rename_columns: {}
+  date_columns: [begdt, enddt]
+  primary_key: [crsp_fundno, begdt, enddt]
+
+crsp_fundno_wficn:
+  path_key: mflink_crsp
+  required_columns: [crsp_fundno, wficn]
+  rename_columns: {}
+  date_columns: []
+  primary_key: [crsp_fundno, wficn]
+
+fundno_wficn:
+  path_key: mflink_s12
+  required_columns: [fundno, fdate, rdate, wficn, assets]
+  rename_columns: {assets: mflink_assets}
+  date_columns: [fdate, rdate]
+  primary_key: [fundno, fdate, rdate]
+
+s12type1:
+  path_key: s12_type1
+  required_columns: [fundno, fdate, rdate, assets]
+  rename_columns: {assets: type1_assets}
+  date_columns: [fdate, rdate]
+  primary_key: [fundno, fdate]
+
+s12type3:
+  path_key: s12_type3
+  required_columns: [fundno, fdate, cusip, shares]
+  rename_columns: {}
+  date_columns: [fdate]
+  primary_key: [fundno, fdate, cusip]
+
+monthly_stock_file:
+  path_key: crsp_monthly
+  required_columns: [PERMNO, CUSIP, MthCalDt, MthRet, MthRetFlg, MthPrc, MthCap, MthVol, ShrOut, SecInfoStartDt, SecInfoEndDt, ShareType, SecurityType, SecuritySubType, USIncFlg, IssuerType, PrimaryExch, ConditionalType, TradingStatusFlg]
+  rename_columns: {PERMNO: permno, CUSIP: cusip, MthCalDt: mthcaldt, MthRet: mthret, MthRetFlg: mthretflg, MthPrc: mthprc, MthCap: mthcap, MthVol: mthvol, ShrOut: shrout, SecInfoStartDt: secinfostartdt, SecInfoEndDt: secinfoenddt, ShareType: sharetype, SecurityType: securitytype, SecuritySubType: securitysubtype, USIncFlg: usincflg, IssuerType: issuertype, PrimaryExch: primaryexch, ConditionalType: conditionaltype, TradingStatusFlg: tradingstatusflg}
+  date_columns: [MthCalDt, SecInfoStartDt, SecInfoEndDt]
+  primary_key: [PERMNO, MthCalDt]
+
+mthadjustfactors:
+  path_key: mth_adjust_factor
+  required_columns: [permno, mthcaldt, mthcumfacshr]
+  optional_columns: [mthcumfacpr]
+  rename_columns: {}
+  date_columns: [mthcaldt]
+  primary_key: [permno, mthcaldt]
+
+daily_stock_file:
+  path_key: crsp_daily
+  required_columns: [PERMNO, DlyCalDt, DlyRet, DlyPrc, DlyVol, DlyBid, DlyAsk]
+  rename_columns: {PERMNO: permno, DlyCalDt: dlycaldt, DlyRet: dlyret, DlyPrc: dlyprc, DlyVol: dlyvol, DlyBid: dlybid, DlyAsk: dlyask}
+  date_columns: [DlyCalDt]
+  primary_key: [PERMNO, DlyCalDt]
+
+compfunda:
+  path_key: compustat
+  required_columns: [consol, indfmt, datafmt, curcd, gvkey, datadate, fyear, ajex, act, at, capx, ceq, che, cogs, csho, dlc, dltt, dp, gp, ib, invt, ivao, lct, lt, mib, ni, oiadp, ppegt, pstk, pstkl, pstkrv, revt, sale, seq, txdb, txditc, txp, wcapch, xad, xint, xrd, xsga]
+  forbidden_required_columns: [popsrc, format]
+  rename_columns: {}
+  date_columns: [datadate]
+  primary_key: [gvkey, datadate]
+
+ccm_linktable:
+  path_key: ccm
+  required_columns: [gvkey, LPERMNO, LINKDT, LINKENDDT, LINKPRIM, LINKTYPE]
+  rename_columns: {LPERMNO: permno, LINKDT: linkdt, LINKENDDT: linkenddt, LINKPRIM: linkprim, LINKTYPE: linktype}
+  date_columns: [LINKDT, LINKENDDT]
+  primary_key: [gvkey, LPERMNO, LINKDT, LINKENDDT, LINKPRIM, LINKTYPE]
+
+ff_monthly:
+  path_key: ff_monthly
+  required_columns: ["", mktrf, smb, hml, rf]
+  rename_columns: {"": yyyymm}
+  date_columns: [yyyymm]
+  primary_key: [yyyymm]
+  unit: percent
+
+mom_monthly:
+  path_key: mom_monthly
+  required_columns: ["", mom]
+  rename_columns: {"": yyyymm}
+  date_columns: [yyyymm]
+  primary_key: [yyyymm]
+  unit: percent
+
+ff_daily:
+  path_key: ff_daily
+  required_columns: ["", mktrf, smb, hml, rf]
+  rename_columns: {"": yyyymmdd}
+  date_columns: [yyyymmdd]
+  primary_key: [yyyymmdd]
+  unit: percent
+
+distribution_information:
+  path_key: distribution
+  required_columns: [PERMNO, DisExDt, DisSeqNbr, DisType, DisPaymentType, DisDetailType, DisDivAmt, DisOrdinaryFlg]
+  rename_columns: {PERMNO: permno, DisExDt: disexdt, DisSeqNbr: disseqnbr, DisType: distype, DisPaymentType: dispaymenttype, DisDetailType: disdetailtype, DisDivAmt: disdivamt, DisOrdinaryFlg: disordinaryflg}
+  date_columns: [DisExDt]
+  primary_key: [PERMNO, DisExDt, DisSeqNbr]
+
+cfnai:
+  path_key: cfnai
+  file_format: csv
+  required_columns: [observation_date, cfnai]
+  rename_columns: {observation_date: observation_month, cfnai: CFNAI}
+  date_columns: [observation_date]
+  date_format: "%Y-%m-%d"
+  frequency: monthly
+  unit: index_not_seasonally_adjusted
+  primary_key: [observation_date]
+
+sentiment:
+  path_key: sentiment
+  file_format: xlsx
+  sheet_name: DATA
+  required_columns: [yearmo, SENT]
+  optional_columns: [SENT_ORTH]
+  rename_columns: {yearmo: observation_month, SENT: Sentiment}
+  date_columns: [yearmo]
+  date_format: "%Y%m"
+  frequency: monthly
+  unit: dimensionless_first_principal_component_score
+  primary_key: [yearmo]
